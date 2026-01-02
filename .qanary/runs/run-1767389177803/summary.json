@@ -1,0 +1,19 @@
+{
+  "id": "run-1767389177803",
+  "repo": "vacation-planner",
+  "branch": "main",
+  "commit": "unknown",
+  "mergeStatus": "partial",
+  "outcome": "failed",
+  "updatedAt": "2026-01-02T21:26:17.804Z",
+  "totals": {
+    "passed": 0,
+    "failed": 8,
+    "skipped": 0,
+    "total": 8,
+    "flaky": 0
+  },
+  "sources": [
+    "playwright"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "demo-run",
+  "mergeStatus": "partial",
+  "outcome": "running",
+  "updatedAt": "2026-01-02T19:30:00.000Z",
+  "repo": "qanary-demo",
+  "branch": "main",
+  "commit": "abc123",
+  "buildId": "1",
+  "totals": {
+    "passed": 12,
+    "failed": 1,
+    "skipped": 2,
+    "flaky": 0,
+    "total": 15
+  },
+  "sources": ["playwright", "jest"]
+}

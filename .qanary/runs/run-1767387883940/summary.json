@@ -1,0 +1,19 @@
+{
+  "id": "run-1767387883940",
+  "repo": "my-org/my-app",
+  "branch": "feat/login",
+  "commit": "8f3a2b1...",
+  "mergeStatus": "partial",
+  "outcome": "passed",
+  "updatedAt": "2026-01-02T21:04:43.978Z",
+  "totals": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "total": 1,
+    "flaky": 0
+  },
+  "sources": [
+    "playwright"
+  ]
+}
