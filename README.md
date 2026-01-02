@@ -1,60 +1,106 @@
-# Nuxt Starter Template
+# Qanary 🐤
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+**Qanary** is a premium, high-end test reporting framework designed to surpass traditional tools like Allure. It
+provides a modern, glassmorphism-inspired UI/UX and is specifically optimized for Nuxt applications using **Playwright**
+for frontend and **Jest/Vitest** for API testing.
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+---
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+## 🌟 Key Features
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-  </picture>
-</a>
+- **Live Merged Reporting**: Seamlessly combine Frontend (Playwright) and API (Jest) test results into a single, unified
+  dashboard.
+- **Premium UI/UX**: A sophisticated, developer-centric interface with glassmorphism effects, smooth animations, and
+  high information density.
+- **Hierarchical Organization**: Tests are grouped by Parent Suite → File → Suite → Test Case for easy navigation.
+- **Visual Attachments**: Direct support for screenshots, videos, and trace files with optimized streaming.
+- **Stability Tracking**: Integrated Test History and Retry deep-dives to identify flaky tests and regressions.
+- **Standalone Server**: Lightweight CLI to run your own reporting instance anywhere.
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
+---
 
-## Quick Start
+## 🚀 Quick Start
 
-```bash [Terminal]
-npm create nuxt@latest -- -t github:nuxt-ui-templates/starter
-```
+### 1. Install the Server
 
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
-
-## Setup
-
-Make sure to install the dependencies:
+Install Qanary globally to use the CLI:
 
 ```bash
-pnpm install
+npm install -g qanary
 ```
 
-## Development Server
+### 2. Start the Reporting Instance
 
-Start the development server on `http://localhost:3000`:
+Launch the dashboard server. By default, it looks for results in the `.qanary` directory.
 
 ```bash
-pnpm dev
+qanary --port 5121 --dir .qanary-results
 ```
 
-## Production
+---
 
-Build the application for production:
+## 🔌 Integration
 
-```bash
-pnpm build
+### Playwright
+
+Install the Playwright reporter:
+`npm install @qanary/playwright-reporter --save-dev`
+
+Update your `playwright.config.ts`:
+
+```typescript
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  reporter: [
+    ['list'],
+    ['@qanary/playwright-reporter', {
+      apiUrl: 'http://localhost:5121/api/runs/push',
+      project: 'my-web-app'
+    }]
+  ],
+});
 ```
 
-Locally preview production build:
+### Jest / Vitest
 
-```bash
-pnpm preview
+Install the Jest reporter:
+`npm install @qanary/jest-reporter --save-dev`
+
+Update your `jest.config.js`:
+
+```javascript
+module.exports = {
+  reporters: [
+    'default',
+    ['@qanary/jest-reporter', {
+      endpoint: 'http://localhost:5121/api/runs/push'
+    }]
+  ],
+};
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+---
+
+## 🛠️ CLI Options
+
+| Option   | Alias | Description                         | Default   |
+|:---------|:------|:------------------------------------|:----------|
+| `--port` | `-p`  | Port to run the server on           | `3000`    |
+| `--dir`  | `-d`  | Directory for results & attachments | `.qanary` |
+| `--help` | `-h`  | Show help information               | -         |
+
+---
+
+## 🧪 Development
+
+If you want to contribute or run from source:
+
+1. **Setup**: `bun install`
+2. **Dev Server**: `bun run dev`
+3. **Build**: `bun run build`
+4. **Typecheck**: `bun run typecheck`
+
+---
+
+Built with ❤️ for modern testing teams.
