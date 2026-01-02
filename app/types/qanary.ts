@@ -19,6 +19,22 @@ export type TestAttachment = {
   size?: number;
 };
 
+export type TestRetry = {
+  attempt: number;
+  outcome: "passed" | "failed" | "skipped";
+  durationMs: number;
+  error?: TestError;
+  attachments?: TestAttachment[];
+  steps?: TestStep[];
+};
+
+export type TestHistory = {
+  runId: string;
+  outcome: "passed" | "failed" | "skipped";
+  durationMs: number;
+  date: string;
+};
+
 export type TestCase = {
   id: string;
   title: string;
@@ -31,6 +47,8 @@ export type TestCase = {
   steps?: TestStep[];
   error?: TestError;
   attachments?: TestAttachment[];
+  history?: TestHistory[];
+  retries?: TestRetry[];
 };
 
 export type RunDetail = {

@@ -38,10 +38,57 @@
         <section v-if="activeSection === 'overview'" class="space-y-4">
           <h2 class="text-2xl font-bold">Quick Start</h2>
           <p class="text-gray-600 dark:text-gray-400">
-            Qanary is designed to be a lightweight, standalone reporting server.
-            To integrate it into your Nuxt app, you'll need to use our reporters
-            for Playwright and Jest.
+            Qanary is a premium, standalone reporting server for Playwright and
+            Jest. It can be installed as a global or local dependency and run
+            via its CLI.
           </p>
+
+          <UCard class="bg-gray-900 border-gray-800">
+            <template #header>
+              <div class="font-bold text-gray-200">Installation & Run</div>
+            </template>
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <div class="text-xs font-bold text-gray-500 uppercase">
+                  Install globally
+                </div>
+                <div
+                  class="flex items-center justify-between bg-black p-3 rounded-lg font-mono text-sm text-green-400 border border-white/5"
+                >
+                  <code>npm install -g qanary</code>
+                  <UButton
+                    color="neutral"
+                    icon="i-lucide-copy"
+                    size="xs"
+                    variant="ghost"
+                    @click="copyToClipboard('npm install -g qanary')"
+                  />
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <div class="text-xs font-bold text-gray-500 uppercase">
+                  Run Server
+                </div>
+                <div
+                  class="flex items-center justify-between bg-black p-3 rounded-lg font-mono text-sm text-green-400 border border-white/5"
+                >
+                  <code>qanary --port 5121 --dir .qanary-results</code>
+                  <UButton
+                    color="neutral"
+                    icon="i-lucide-copy"
+                    size="xs"
+                    variant="ghost"
+                    @click="
+                      copyToClipboard(
+                        'qanary --port 5121 --dir .qanary-results',
+                      )
+                    "
+                  />
+                </div>
+              </div>
+            </div>
+          </UCard>
 
           <UCard>
             <template #header>

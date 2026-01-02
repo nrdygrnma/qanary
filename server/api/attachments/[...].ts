@@ -13,7 +13,11 @@ export default defineEventHandler(async (event) => {
 
   if (!match) return;
 
-  const [, runId, filename] = match;
+  const runId = match[1];
+  const filename = match[2];
+
+  if (!runId || !filename) return;
+
   // Decode URI components in case of spaces/special chars in filename
   const decodedFilename = decodeURIComponent(filename);
   const filePath = join(runsDir, runId, "attachments", decodedFilename);

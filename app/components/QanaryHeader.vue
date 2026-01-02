@@ -32,7 +32,21 @@
         <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
         System Online
       </div>
-      <UButton color="neutral" icon="i-lucide-github" variant="ghost" />
+      <QanaryTooltip class="flex-1" text="View on GitHub">
+        <UButton
+          color="neutral"
+          icon="i-lucide-github"
+          variant="ghost"
+          @click="
+            navigateTo('https://github.com/nrdygrnma/qanary', {
+              external: true,
+              open: {
+                target: '_blank',
+              },
+            })
+          "
+        />
+      </QanaryTooltip>
       <UButton
         color="neutral"
         icon="i-lucide-settings"

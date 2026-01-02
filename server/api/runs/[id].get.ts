@@ -54,6 +54,48 @@ export default defineEventHandler(async (event) => {
         source: "playwright",
         outcome: "failed",
         durationMs: 44658,
+        history: [
+          {
+            runId: "run-101",
+            outcome: "passed",
+            durationMs: 42000,
+            date: "2026-01-01T10:00:00Z",
+          },
+          {
+            runId: "run-102",
+            outcome: "passed",
+            durationMs: 41500,
+            date: "2026-01-01T12:00:00Z",
+          },
+          {
+            runId: "run-103",
+            outcome: "failed",
+            durationMs: 45000,
+            date: "2026-01-02T08:00:00Z",
+          },
+        ],
+        retries: [
+          {
+            attempt: 1,
+            outcome: "failed",
+            durationMs: 44658,
+            error: {
+              message:
+                "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.",
+              stack:
+                "Error: locator.waitFor: Timeout 5000ms exceeded.\n    at flights.spec.ts:296:3",
+            },
+            attachments: [
+              {
+                name: "screenshot",
+                type: "image",
+                url: "https://placehold.co/800x450/red/white?text=Attempt+1+Screenshot",
+                contentType: "image/png",
+                size: 30720,
+              },
+            ],
+          },
+        ],
         error: {
           message: "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.",
           stack:
@@ -126,6 +168,31 @@ export default defineEventHandler(async (event) => {
         source: "playwright",
         outcome: "passed",
         durationMs: 34764,
+        history: [
+          {
+            runId: "run-101",
+            outcome: "failed",
+            durationMs: 38000,
+            date: "2026-01-01T10:00:00Z",
+          },
+          {
+            runId: "run-102",
+            outcome: "passed",
+            durationMs: 35000,
+            date: "2026-01-01T12:00:00Z",
+          },
+        ],
+        retries: [
+          {
+            attempt: 1,
+            outcome: "failed",
+            durationMs: 12000,
+            error: {
+              message: "Unexpected dialog appearance",
+              stack: "Error: Unexpected dialog\n    at flights.spec.ts:150:5",
+            },
+          },
+        ],
         steps: [
           { title: "Before Hooks", outcome: "passed", durationMs: 8310 },
           {

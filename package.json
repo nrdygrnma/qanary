@@ -1,6 +1,19 @@
 {
   "name": "qanary",
-  "private": true,
+  "private": false,
+  "version": "1.0.0",
+  "description": "Premium test reporting server for Playwright and Jest",
+  "bin": {
+    "qanary": "./bin/qanary.js"
+  },
+  "files": [
+    "bin",
+    ".output",
+    "app",
+    "server",
+    "nuxt.config.ts",
+    "tsconfig.json"
+  ],
   "type": "module",
   "scripts": {
     "build": "nuxt build",

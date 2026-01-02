@@ -66,42 +66,45 @@
               <div
                 class="flex h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"
               >
-                <div
-                  v-if="(row.original as RunSummary).totals.passed > 0"
-                  :style="{
-                    width:
-                      ((row.original as RunSummary).totals.passed /
-                        (row.original as RunSummary).totals.total) *
-                        100 +
-                      '%',
-                  }"
-                  class="h-full bg-green-500 transition-all duration-500"
-                  title="Passed"
-                />
-                <div
-                  v-if="(row.original as RunSummary).totals.failed > 0"
-                  :style="{
-                    width:
-                      ((row.original as RunSummary).totals.failed /
-                        (row.original as RunSummary).totals.total) *
-                        100 +
-                      '%',
-                  }"
-                  class="h-full bg-red-500 transition-all duration-500"
-                  title="Failed"
-                />
-                <div
-                  v-if="(row.original as RunSummary).totals.skipped > 0"
-                  :style="{
-                    width:
-                      ((row.original as RunSummary).totals.skipped /
-                        (row.original as RunSummary).totals.total) *
-                        100 +
-                      '%',
-                  }"
-                  class="h-full bg-gray-400 transition-all duration-500"
-                  title="Skipped"
-                />
+                <QanaryTooltip class="flex-1" text="Passed">
+                  <div
+                    v-if="(row.original as RunSummary).totals.passed > 0"
+                    :style="{
+                      width:
+                        ((row.original as RunSummary).totals.passed /
+                          (row.original as RunSummary).totals.total) *
+                          100 +
+                        '%',
+                    }"
+                    class="h-full bg-green-500 transition-all duration-500"
+                  />
+                </QanaryTooltip>
+                <QanaryTooltip class="flex-1" text="Failed">
+                  <div
+                    v-if="(row.original as RunSummary).totals.failed > 0"
+                    :style="{
+                      width:
+                        ((row.original as RunSummary).totals.failed /
+                          (row.original as RunSummary).totals.total) *
+                          100 +
+                        '%',
+                    }"
+                    class="h-full bg-red-500 transition-all duration-500"
+                  />
+                </QanaryTooltip>
+                <QanaryTooltip class="flex-1" text="Skipped">
+                  <div
+                    v-if="(row.original as RunSummary).totals.skipped > 0"
+                    :style="{
+                      width:
+                        ((row.original as RunSummary).totals.skipped /
+                          (row.original as RunSummary).totals.total) *
+                          100 +
+                        '%',
+                    }"
+                    class="h-full bg-gray-400 transition-all duration-500"
+                  />
+                </QanaryTooltip>
               </div>
               <div
                 class="flex items-center justify-between text-[10px] font-bold tracking-tight"
@@ -131,21 +134,25 @@
 
           <template #sources-cell="{ row }">
             <div class="flex -space-x-1.5 overflow-hidden">
-              <div
+              <QanaryTooltip
                 v-for="source in (row.original as RunSummary).sources"
                 :key="source"
-                :title="source"
-                class="inline-flex items-center justify-center w-7 h-7 rounded-full border-2 border-white dark:border-gray-900 bg-gray-50 dark:bg-gray-800 text-gray-400"
+                :text="source"
+                class="capitalize"
               >
-                <UIcon
-                  :name="
-                    source === 'playwright'
-                      ? 'i-lucide-monitor'
-                      : 'i-lucide-webhook'
-                  "
-                  class="w-3.5 h-3.5"
-                />
-              </div>
+                <div
+                  class="inline-flex items-center justify-center w-7 h-7 rounded-full border-2 border-white dark:border-gray-900 bg-gray-50 dark:bg-gray-800 text-gray-400"
+                >
+                  <UIcon
+                    :name="
+                      source === 'playwright'
+                        ? 'i-lucide-monitor'
+                        : 'i-lucide-webhook'
+                    "
+                    class="w-3.5 h-3.5"
+                  />
+                </div>
+              </QanaryTooltip>
             </div>
           </template>
 
@@ -158,23 +165,26 @@
               >
                 {{ (row.original as RunSummary).mergeStatus }}
               </UBadge>
-              <UIcon
-                v-if="(row.original as RunSummary).mergeStatus === 'partial'"
-                class="w-4 h-4 text-warning-500 animate-pulse"
-                name="i-lucide-loader-2"
-                title="Awaiting more sources..."
-              />
+              <QanaryTooltip text="Awaiting more sources...">
+                <UIcon
+                  v-if="(row.original as RunSummary).mergeStatus === 'partial'"
+                  class="w-4 h-4 text-warning-500 animate-pulse"
+                  name="i-lucide-loader-2"
+                />
+              </QanaryTooltip>
             </div>
           </template>
 
           <template #outcome-cell="{ row }">
-            <UBadge
-              :color="outcomeColor((row.original as RunSummary).outcome)"
-              class="capitalize px-2.5"
-              variant="solid"
-            >
-              {{ (row.original as RunSummary).outcome }}
-            </UBadge>
+            <QanaryTooltip :text="(row.original as RunSummary).outcome">
+              <UBadge
+                :color="outcomeColor((row.original as RunSummary).outcome)"
+                class="capitalize px-2.5 cursor-pointer"
+                variant="solid"
+              >
+                {{ (row.original as RunSummary).outcome }}
+              </UBadge>
+            </QanaryTooltip>
           </template>
 
           <template #updatedAt-cell="{ row }">
@@ -199,8 +209,9 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted } from "vue";
 import type { TableColumn, TableRow } from "@nuxt/ui";
-import type { RunSummary } from "~/types/qanary";
+import type { RunSummary } from "@/types/qanary";
 import { useRuns } from "@/composables/useRuns";
+import QanaryTooltip from "@/components/QanaryTooltip.vue";
 
 const formatDateTime = (iso: string) => {
   const d = new Date(iso);

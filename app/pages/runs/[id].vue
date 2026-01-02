@@ -15,30 +15,24 @@
         <div class="flex items-center gap-2">
           <div class="text-xl font-semibold">Run #{{ run?.id || "-" }}</div>
 
-          <UBadge
-            v-if="run"
-            :color="mergeColor(run.mergeStatus)"
-            class="capitalize"
-            variant="soft"
-          >
-            <div class="flex items-center gap-1.5">
-              <UIcon
-                v-if="run.mergeStatus === 'partial'"
-                class="w-3.5 h-3.5 animate-spin"
-                name="i-lucide-refresh-cw"
-              />
-              {{ run.mergeStatus }}
-            </div>
-          </UBadge>
+          <QanaryTooltip v-if="run" :text="run.mergeStatus" class="capitalize">
+            <UBadge :color="mergeColor(run.mergeStatus)" variant="soft">
+              <div class="flex items-center gap-1.5">
+                <UIcon
+                  v-if="run.mergeStatus === 'partial'"
+                  class="w-3.5 h-3.5 animate-spin"
+                  name="i-lucide-refresh-cw"
+                />
+                {{ run.mergeStatus }}
+              </div>
+            </UBadge>
+          </QanaryTooltip>
 
-          <UBadge
-            v-if="run"
-            :color="outcomeColor(run.outcome)"
-            class="capitalize"
-            variant="soft"
-          >
-            {{ run.outcome }}
-          </UBadge>
+          <QanaryTooltip v-if="run" :text="run.outcome" class="capitalize">
+            <UBadge :color="outcomeColor(run.outcome)" variant="soft">
+              {{ run.outcome }}
+            </UBadge>
+          </QanaryTooltip>
         </div>
 
         <div v-if="run" class="text-sm text-muted">
@@ -53,132 +47,148 @@
           icon="i-lucide-refresh-cw"
           label="Refresh"
           variant="outline"
-          @click="refresh"
+          @click="() => refresh()"
         />
       </div>
     </div>
 
     <div v-if="run" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <UCard class="relative overflow-hidden">
-        <div class="absolute right-[-10px] top-[-10px] opacity-10">
-          <UIcon class="w-20 h-20" name="i-lucide-list" />
-        </div>
-        <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">
-          Total Tests
-        </div>
-        <div class="text-3xl font-bold mt-1">{{ run.totals.total }}</div>
-        <div class="mt-2 text-xs text-gray-500">Across all sources</div>
-      </UCard>
+      <QanaryTooltip text="Total number of tests in this run">
+        <UCard class="relative overflow-hidden">
+          <div class="absolute right-[-10px] top-[-10px] opacity-10">
+            <UIcon class="w-20 h-20" name="i-lucide-list" />
+          </div>
+          <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+            Total Tests
+          </div>
+          <div class="text-3xl font-bold mt-1">{{ run.totals.total }}</div>
+          <div class="mt-2 text-xs text-gray-500">Across all sources</div>
+        </UCard>
+      </QanaryTooltip>
 
-      <UCard
-        class="relative overflow-hidden ring-1 ring-green-500/20 bg-green-50/50 dark:bg-green-900/10"
-      >
-        <div
-          class="absolute right-[-10px] top-[-10px] opacity-10 text-green-500"
+      <QanaryTooltip text="Tests that passed successfully">
+        <UCard
+          class="relative overflow-hidden ring-1 ring-green-500/20 bg-green-50/50 dark:bg-green-900/10"
         >
-          <UIcon class="w-20 h-20" name="i-lucide-check-circle" />
-        </div>
-        <div
-          class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider"
-        >
-          Passed
-        </div>
-        <div class="text-3xl font-bold mt-1 text-green-700 dark:text-green-300">
-          {{ run.totals.passed }}
-        </div>
-        <div class="mt-2 text-xs text-green-600/60">
-          {{ Math.round((run.totals.passed / run.totals.total) * 100) }}%
-          Success Rate
-        </div>
-      </UCard>
+          <div
+            class="absolute right-[-10px] top-[-10px] opacity-10 text-green-500"
+          >
+            <UIcon class="w-20 h-20" name="i-lucide-check-circle" />
+          </div>
+          <div
+            class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider"
+          >
+            Passed
+          </div>
+          <div
+            class="text-3xl font-bold mt-1 text-green-700 dark:text-green-300"
+          >
+            {{ run.totals.passed }}
+          </div>
+          <div class="mt-2 text-xs text-green-600/60">
+            {{ Math.round((run.totals.passed / run.totals.total) * 100) }}%
+            Success Rate
+          </div>
+        </UCard>
+      </QanaryTooltip>
 
-      <UCard
-        class="relative overflow-hidden ring-1 ring-red-500/20 bg-red-50/50 dark:bg-red-900/10"
-      >
-        <div class="absolute right-[-10px] top-[-10px] opacity-10 text-red-500">
-          <UIcon class="w-20 h-20" name="i-lucide-x-circle" />
-        </div>
-        <div
-          class="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider"
+      <QanaryTooltip text="Tests that failed and need attention">
+        <UCard
+          class="relative overflow-hidden ring-1 ring-red-500/20 bg-red-50/50 dark:bg-red-900/10"
         >
-          Failed
-        </div>
-        <div class="text-3xl font-bold mt-1 text-red-700 dark:text-red-300">
-          {{ run.totals.failed }}
-        </div>
-        <div class="mt-2 text-xs text-red-600/60">Requires attention</div>
-      </UCard>
+          <div
+            class="absolute right-[-10px] top-[-10px] opacity-10 text-red-500"
+          >
+            <UIcon class="w-20 h-20" name="i-lucide-x-circle" />
+          </div>
+          <div
+            class="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider"
+          >
+            Failed
+          </div>
+          <div class="text-3xl font-bold mt-1 text-red-700 dark:text-red-300">
+            {{ run.totals.failed }}
+          </div>
+          <div class="mt-2 text-xs text-red-600/60">Requires attention</div>
+        </UCard>
+      </QanaryTooltip>
 
-      <UCard
-        class="relative overflow-hidden ring-1 ring-blue-500/20 bg-blue-50/50 dark:bg-blue-900/10"
-      >
-        <div
-          class="absolute right-[-10px] top-[-10px] opacity-10 text-blue-500"
+      <QanaryTooltip text="Total execution time for all tests">
+        <UCard
+          class="relative overflow-hidden ring-1 ring-blue-500/20 bg-blue-50/50 dark:bg-blue-900/10"
         >
-          <UIcon class="w-20 h-20" name="i-lucide-clock" />
-        </div>
-        <div
-          class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider"
-        >
-          Duration
-        </div>
-        <div class="text-3xl font-bold mt-1 text-blue-700 dark:text-blue-300">
-          {{ formatDuration(run.durationMs) }}
-        </div>
-        <div class="mt-2 text-xs text-blue-600/60">Total execution time</div>
-      </UCard>
+          <div
+            class="absolute right-[-10px] top-[-10px] opacity-10 text-blue-500"
+          >
+            <UIcon class="w-20 h-20" name="i-lucide-clock" />
+          </div>
+          <div
+            class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider"
+          >
+            Duration
+          </div>
+          <div class="text-3xl font-bold mt-1 text-blue-700 dark:text-blue-300">
+            {{ formatDuration(run.durationMs) }}
+          </div>
+          <div class="mt-2 text-xs text-blue-600/60">Total execution time</div>
+        </UCard>
+      </QanaryTooltip>
     </div>
 
     <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
       <div
         class="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-900/50 p-1.5 rounded-xl border border-gray-100 dark:border-gray-800 w-full md:w-auto"
       >
-        <button
+        <QanaryTooltip
           v-for="filter in filters"
           :key="filter.value"
-          :class="[
-            'flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 group relative',
-            activeFilter === filter.value
-              ? filter.value === 'passed'
-                ? 'bg-green-500 text-white shadow-sm shadow-green-500/20'
-                : filter.value === 'failed'
-                  ? 'bg-red-500 text-white shadow-sm shadow-red-500/20'
-                  : filter.value === 'skipped'
-                    ? 'bg-blue-500 text-white shadow-sm shadow-blue-500/20'
-                    : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
-              : filter.value === 'passed'
-                ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10'
-                : filter.value === 'failed'
-                  ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10'
-                  : filter.value === 'skipped'
-                    ? 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800',
-          ]"
-          @click="activeFilter = filter.value"
+          :text="`${filter.label} tests`"
         >
-          <UIcon
-            v-if="filter.icon"
-            :name="filter.icon"
-            class="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity"
-          />
-          {{ filter.label }}
-          <span
+          <button
             :class="[
-              'px-1.5 py-0.5 rounded-md text-[10px] font-mono transition-colors',
+              'flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 group relative',
               activeFilter === filter.value
-                ? 'bg-white/20 text-white'
-                : filter.value === 'passed'
-                  ? 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300'
+                ? filter.value === 'passed'
+                  ? 'bg-green-500 text-white shadow-sm shadow-green-500/20'
                   : filter.value === 'failed'
-                    ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300'
+                    ? 'bg-red-500 text-white shadow-sm shadow-red-500/20'
                     : filter.value === 'skipped'
-                      ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
+                      ? 'bg-blue-500 text-white shadow-sm shadow-blue-500/20'
+                      : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                : filter.value === 'passed'
+                  ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10'
+                  : filter.value === 'failed'
+                    ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10'
+                    : filter.value === 'skipped'
+                      ? 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800',
             ]"
+            @click="activeFilter = filter.value"
           >
-            {{ filter.count }}
-          </span>
-        </button>
+            <UIcon
+              v-if="filter.icon"
+              :name="filter.icon"
+              class="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity"
+            />
+            {{ filter.label }}
+            <span
+              :class="[
+                'px-1.5 py-0.5 rounded-md text-[10px] font-mono transition-colors',
+                activeFilter === filter.value
+                  ? 'bg-white/20 text-white'
+                  : filter.value === 'passed'
+                    ? 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300'
+                    : filter.value === 'failed'
+                      ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300'
+                      : filter.value === 'skipped'
+                        ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
+              ]"
+            >
+              {{ filter.count }}
+            </span>
+          </button>
+        </QanaryTooltip>
       </div>
 
       <UInput
@@ -412,23 +422,28 @@
                               @click="toggleExpand(`t-${test.id}`)"
                             >
                               <div class="flex items-center gap-3 min-w-0">
-                                <UIcon
-                                  :class="
-                                    test.outcome === 'passed'
-                                      ? 'text-green-500'
-                                      : test.outcome === 'failed'
-                                        ? 'text-red-500'
-                                        : 'text-gray-400'
-                                  "
-                                  :name="
-                                    test.outcome === 'passed'
-                                      ? 'i-lucide-check-circle'
-                                      : test.outcome === 'failed'
-                                        ? 'i-lucide-x-circle'
-                                        : 'i-lucide-circle-dashed'
-                                  "
-                                  class="w-5 h-5 flex-shrink-0"
-                                />
+                                <QanaryTooltip
+                                  :text="test.outcome"
+                                  class="capitalize"
+                                >
+                                  <UIcon
+                                    :class="
+                                      test.outcome === 'passed'
+                                        ? 'text-green-500'
+                                        : test.outcome === 'failed'
+                                          ? 'text-red-500'
+                                          : 'text-gray-400'
+                                    "
+                                    :name="
+                                      test.outcome === 'passed'
+                                        ? 'i-lucide-check-circle'
+                                        : test.outcome === 'failed'
+                                          ? 'i-lucide-x-circle'
+                                          : 'i-lucide-circle-dashed'
+                                    "
+                                    class="w-5 h-5 flex-shrink-0"
+                                  />
+                                </QanaryTooltip>
                                 <span
                                   :class="
                                     test.outcome === 'failed'
@@ -443,33 +458,38 @@
                               <div
                                 class="flex items-center gap-4 flex-shrink-0"
                               >
-                                <span
-                                  class="text-[10px] font-mono text-gray-400"
-                                  >{{ formatDuration(test.durationMs) }}</span
-                                >
+                                <QanaryTooltip text="Execution Duration">
+                                  <span
+                                    class="text-[10px] font-mono text-gray-400"
+                                    >{{ formatDuration(test.durationMs) }}</span
+                                  >
+                                </QanaryTooltip>
                                 <div
                                   v-if="test.attachments?.length"
                                   class="flex -space-x-1"
                                 >
-                                  <div
+                                  <QanaryTooltip
                                     v-for="(
                                       attachment, idx
                                     ) in test.attachments"
                                     :key="idx"
-                                    :title="attachment.name"
-                                    class="w-4 h-4 rounded-full border border-white dark:border-gray-900 bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
+                                    :text="attachment.name"
                                   >
-                                    <UIcon
-                                      :name="
-                                        attachment.type === 'image'
-                                          ? 'i-lucide-image'
-                                          : attachment.type === 'video'
-                                            ? 'i-lucide-video'
-                                            : 'i-lucide-file-text'
-                                      "
-                                      class="w-2.5 h-2.5 text-gray-400"
-                                    />
-                                  </div>
+                                    <div
+                                      class="w-4 h-4 rounded-full border border-white dark:border-gray-900 bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
+                                    >
+                                      <UIcon
+                                        :name="
+                                          attachment.type === 'image'
+                                            ? 'i-lucide-image'
+                                            : attachment.type === 'video'
+                                              ? 'i-lucide-video'
+                                              : 'i-lucide-file-text'
+                                        "
+                                        class="w-2.5 h-2.5 text-gray-400"
+                                      />
+                                    </div>
+                                  </QanaryTooltip>
                                 </div>
                                 <UIcon
                                   v-if="
@@ -487,211 +507,477 @@
                               </div>
                             </div>
 
-                            <!-- Test Details (Steps, Errors) -->
+                            <!-- Test Details (Overview, History, Retries) -->
                             <div
                               v-show="isExpanded(`t-${test.id}`)"
                               class="p-4 pl-24 bg-gray-50 dark:bg-gray-900/40 space-y-4 border-t border-gray-100 dark:border-gray-800"
                             >
+                              <!-- Independent Segmented Control -->
                               <div
-                                v-if="test.error"
-                                class="p-4 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-100 dark:border-red-900/30"
+                                v-if="
+                                  test.history?.length ||
+                                  test.retries?.length ||
+                                  test.attachments?.length
+                                "
+                                class="flex justify-center mb-6"
                               >
-                                <div class="flex items-start gap-3">
-                                  <UIcon
-                                    class="w-5 h-5 text-red-500 mt-0.5"
-                                    name="i-lucide-alert-circle"
-                                  />
-                                  <div class="space-y-2 overflow-hidden">
-                                    <div
-                                      class="text-sm font-bold text-red-700 dark:text-red-400"
+                                <div
+                                  class="inline-flex p-1 bg-gray-100 dark:bg-black/40 rounded-xl backdrop-blur-md shadow-inner border border-gray-200 dark:border-gray-800"
+                                >
+                                  <QanaryTooltip
+                                    v-for="tab in testTabs(test)"
+                                    :key="tab.value"
+                                    :text="tab.label"
+                                  >
+                                    <button
+                                      :class="[
+                                        'flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-300',
+                                        getActiveTab(test.id) === tab.value
+                                          ? 'bg-white dark:bg-primary-500 text-primary-600 dark:text-white shadow-sm ring-1 ring-gray-200 dark:ring-primary-400/20'
+                                          : 'text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-white/5',
+                                      ]"
+                                      @click="setActiveTab(test.id, tab.value)"
                                     >
-                                      {{ stripAnsi(test.error.message) }}
+                                      <UIcon :name="tab.icon" class="w-4 h-4" />
+                                      {{ tab.label }}
+                                    </button>
+                                  </QanaryTooltip>
+                                </div>
+                              </div>
+
+                              <!-- Overview Tab -->
+                              <div
+                                v-if="getActiveTab(test.id) === 'overview'"
+                                class="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300"
+                              >
+                                <div
+                                  v-if="test.error"
+                                  class="p-4 bg-red-50/50 dark:bg-red-950/20 rounded-xl border border-red-100 dark:border-red-900/30 backdrop-blur-sm relative overflow-hidden group/error"
+                                >
+                                  <div
+                                    class="absolute left-0 top-0 bottom-0 w-1 bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+                                  ></div>
+                                  <div class="flex items-start gap-3">
+                                    <UIcon
+                                      class="w-5 h-5 text-red-500 mt-0.5 animate-pulse"
+                                      name="i-lucide-alert-circle"
+                                    />
+                                    <div class="space-y-2 overflow-hidden">
+                                      <div
+                                        class="text-sm font-bold text-red-700 dark:text-red-400"
+                                      >
+                                        {{ stripAnsi(test.error.message) }}
+                                      </div>
+                                      <pre
+                                        v-if="test.error.stack"
+                                        class="text-[11px] font-mono text-red-600/80 dark:text-red-300/60 overflow-x-auto p-4 bg-gray-900/90 dark:bg-black/60 rounded-lg border border-white/5 dark:border-white/5 whitespace-pre-wrap shadow-xl ring-1 ring-white/5"
+                                        >{{ stripAnsi(test.error.stack) }}</pre
+                                      >
                                     </div>
-                                    <pre
-                                      v-if="test.error.stack"
-                                      class="text-xs font-mono text-red-600/80 dark:text-red-300/60 overflow-x-auto p-3 bg-white/50 dark:bg-black/30 rounded border border-red-100/50 dark:border-red-900/20 whitespace-pre-wrap"
-                                      >{{ stripAnsi(test.error.stack) }}</pre
+                                  </div>
+                                </div>
+
+                                <div
+                                  v-if="test.steps?.length"
+                                  class="space-y-3"
+                                >
+                                  <div
+                                    class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest flex items-center gap-3"
+                                  >
+                                    <span class="flex-shrink-0"
+                                      >Execution Body</span
                                     >
+                                    <div
+                                      class="h-px flex-1 bg-gray-200 dark:bg-gray-800"
+                                    />
+                                  </div>
+                                  <div
+                                    class="space-y-1 bg-gray-950 dark:bg-black/60 rounded-xl p-2 border border-white/5 shadow-2xl overflow-hidden"
+                                  >
+                                    <div
+                                      v-for="(step, idx) in test.steps"
+                                      :key="idx"
+                                      class="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors group/step"
+                                    >
+                                      <div class="flex items-center gap-3">
+                                        <UIcon
+                                          :class="
+                                            step.outcome === 'passed'
+                                              ? 'text-green-400'
+                                              : 'text-red-400'
+                                          "
+                                          :name="
+                                            step.outcome === 'passed'
+                                              ? 'i-lucide-terminal'
+                                              : 'i-lucide-alert-triangle'
+                                          "
+                                          class="w-3.5 h-3.5"
+                                        />
+                                        <span
+                                          class="text-xs font-mono text-gray-400 group-hover/step:text-gray-200"
+                                          >{{ stripAnsi(step.title) }}</span
+                                        >
+                                      </div>
+                                      <span
+                                        class="text-[10px] font-mono text-gray-600 group-hover/step:text-gray-400"
+                                        >{{
+                                          formatDuration(step.durationMs)
+                                        }}</span
+                                      >
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div
+                                  v-if="
+                                    !test.error &&
+                                    !test.steps?.length &&
+                                    !test.attachments?.length
+                                  "
+                                  class="text-xs text-gray-500 italic flex items-center gap-2 p-8 justify-center bg-white/50 dark:bg-black/20 rounded-xl border border-dashed border-gray-200 dark:border-gray-800"
+                                >
+                                  <UIcon
+                                    class="w-4 h-4 opacity-50"
+                                    name="i-lucide-ghost"
+                                  />
+                                  No detailed telemetry available for this run.
+                                </div>
+                              </div>
+
+                              <!-- Attachments Tab -->
+                              <div
+                                v-else-if="
+                                  getActiveTab(test.id) === 'attachments'
+                                "
+                                class="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300"
+                              >
+                                <div
+                                  v-if="test.attachments?.length"
+                                  class="space-y-3"
+                                >
+                                  <div
+                                    class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest flex items-center gap-3"
+                                  >
+                                    <span class="flex-shrink-0"
+                                      >Test Attachments</span
+                                    >
+                                    <div
+                                      class="h-px flex-1 bg-gray-200 dark:bg-gray-800"
+                                    />
+                                  </div>
+                                  <div
+                                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                                  >
+                                    <div
+                                      v-for="(
+                                        attachment, idx
+                                      ) in test.attachments"
+                                      :key="idx"
+                                      class="group/attachment relative flex flex-col bg-white dark:bg-gray-900/40 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden hover:ring-2 hover:ring-primary-500/20 transition-all shadow-sm"
+                                    >
+                                      <div
+                                        class="aspect-video bg-gray-50 dark:bg-black/40 relative overflow-hidden flex items-center justify-center"
+                                      >
+                                        <img
+                                          v-if="attachment.type === 'image'"
+                                          :alt="attachment.name"
+                                          :src="attachment.url"
+                                          class="object-contain w-full h-full"
+                                          loading="lazy"
+                                        />
+                                        <video
+                                          v-else-if="
+                                            attachment.type === 'video'
+                                          "
+                                          :src="attachment.url"
+                                          class="object-contain w-full h-full"
+                                          controls
+                                        />
+                                        <div
+                                          v-else
+                                          class="flex flex-col items-center gap-2 text-gray-400"
+                                        >
+                                          <UIcon
+                                            :name="
+                                              attachment.type === 'text'
+                                                ? 'i-lucide-file-text'
+                                                : 'i-lucide-paperclip'
+                                            "
+                                            class="w-10 h-10 opacity-30"
+                                          />
+                                        </div>
+
+                                        <div
+                                          class="absolute inset-0 bg-primary-950/60 opacity-0 group-hover/attachment:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]"
+                                        >
+                                          <QanaryTooltip text="Open in new tab">
+                                            <UButton
+                                              v-if="attachment.url !== '#'"
+                                              :to="attachment.url"
+                                              color="neutral"
+                                              external
+                                              icon="i-lucide-external-link"
+                                              size="sm"
+                                              target="_blank"
+                                              variant="solid"
+                                            />
+                                          </QanaryTooltip>
+                                          <QanaryTooltip text="Maximize">
+                                            <UButton
+                                              color="neutral"
+                                              icon="i-lucide-maximize"
+                                              size="sm"
+                                              variant="solid"
+                                              @click.stop
+                                            />
+                                          </QanaryTooltip>
+                                        </div>
+                                      </div>
+
+                                      <div
+                                        class="p-3 flex items-center justify-between border-t border-gray-100 dark:border-gray-800"
+                                      >
+                                        <div class="min-w-0">
+                                          <div
+                                            class="text-xs font-bold text-gray-700 dark:text-gray-300 truncate"
+                                          >
+                                            {{ attachment.name }}
+                                          </div>
+                                          <div
+                                            class="text-[10px] text-gray-400 dark:text-gray-500 font-mono flex items-center gap-1.5"
+                                          >
+                                            {{ attachment.contentType }}
+                                            <span class="opacity-30">·</span>
+                                            {{
+                                              Math.round(
+                                                (attachment.size || 0) / 1024,
+                                              )
+                                            }}
+                                            KiB
+                                          </div>
+                                        </div>
+                                        <UIcon
+                                          :class="
+                                            attachment.type === 'image'
+                                              ? 'text-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.3)]'
+                                              : attachment.type === 'video'
+                                                ? 'text-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.3)]'
+                                                : 'text-gray-400'
+                                          "
+                                          :name="
+                                            attachment.type === 'image'
+                                              ? 'i-lucide-image'
+                                              : attachment.type === 'video'
+                                                ? 'i-lucide-video'
+                                                : 'i-lucide-file-text'
+                                          "
+                                          class="w-4 h-4 flex-shrink-0"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div
+                                  v-else
+                                  class="text-xs text-gray-500 italic flex items-center gap-2 p-8 justify-center bg-white/50 dark:bg-black/20 rounded-xl border border-dashed border-gray-200 dark:border-gray-800"
+                                >
+                                  <UIcon
+                                    class="w-4 h-4 opacity-50"
+                                    name="i-lucide-paperclip"
+                                  />
+                                  No attachments available for this run.
+                                </div>
+                              </div>
+
+                              <!-- History Tab -->
+                              <div
+                                v-else-if="getActiveTab(test.id) === 'history'"
+                                class="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300"
+                              >
+                                <div
+                                  class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest"
+                                >
+                                  Run History Timeline
+                                </div>
+                                <div class="relative pl-6 space-y-8">
+                                  <div
+                                    class="absolute left-2.5 top-2 bottom-2 w-px bg-gradient-to-b from-primary-500/50 via-gray-200 dark:via-gray-800 to-transparent"
+                                  ></div>
+                                  <div
+                                    v-for="(hist, idx) in test.history"
+                                    :key="idx"
+                                    class="relative group/hist"
+                                  >
+                                    <QanaryTooltip
+                                      :text="hist.outcome"
+                                      class="capitalize"
+                                    >
+                                      <div
+                                        :class="[
+                                          'absolute -left-[21px] top-1 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-gray-900 transition-all duration-300 ring-4 ring-transparent group-hover/hist:scale-125',
+                                          hist.outcome === 'passed'
+                                            ? 'bg-green-500 group-hover/hist:ring-green-500/20'
+                                            : 'bg-red-500 group-hover/hist:ring-red-500/20',
+                                        ]"
+                                      ></div>
+                                    </QanaryTooltip>
+                                    <div
+                                      class="flex items-center justify-between"
+                                    >
+                                      <div class="space-y-1">
+                                        <div
+                                          class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2"
+                                        >
+                                          Run #{{ hist.runId }}
+                                          <QanaryTooltip
+                                            :text="hist.outcome"
+                                            class="capitalize"
+                                          >
+                                            <UBadge
+                                              :color="
+                                                hist.outcome === 'passed'
+                                                  ? 'success'
+                                                  : 'error'
+                                              "
+                                              size="xs"
+                                              variant="soft"
+                                              >{{ hist.outcome }}</UBadge
+                                            >
+                                          </QanaryTooltip>
+                                        </div>
+                                        <div
+                                          class="text-[10px] text-gray-400 dark:text-gray-500 font-medium"
+                                        >
+                                          {{ formatDate(hist.date) }}
+                                        </div>
+                                      </div>
+                                      <div class="text-right">
+                                        <QanaryTooltip
+                                          text="Execution Duration"
+                                        >
+                                          <div
+                                            class="text-xs font-mono font-bold text-gray-600 dark:text-gray-400"
+                                          >
+                                            {{
+                                              formatDuration(hist.durationMs)
+                                            }}
+                                          </div>
+                                        </QanaryTooltip>
+                                        <div
+                                          class="text-[9px] text-gray-400 dark:text-gray-600 uppercase tracking-tighter"
+                                        >
+                                          Execution Time
+                                        </div>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
 
+                              <!-- Retries Tab -->
                               <div
-                                v-if="test.attachments?.length"
-                                class="space-y-3"
+                                v-else-if="getActiveTab(test.id) === 'retries'"
+                                class="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300"
                               >
                                 <div
-                                  class="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2"
-                                >
-                                  Attachments
-                                  <div
-                                    class="h-[1px] flex-1 bg-gray-100 dark:bg-gray-800"
-                                  />
-                                </div>
-                                <div
-                                  class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                                  v-for="retry in test.retries"
+                                  :key="retry.attempt"
+                                  class="space-y-4"
                                 >
                                   <div
-                                    v-for="(
-                                      attachment, idx
-                                    ) in test.attachments"
-                                    :key="idx"
-                                    class="group/attachment relative flex flex-col bg-white dark:bg-black/30 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden hover:ring-2 hover:ring-primary-500/20 transition-all"
+                                    class="flex items-center justify-between p-3 bg-white dark:bg-black/20 rounded-xl border border-gray-100 dark:border-gray-800"
                                   >
                                     <div
-                                      class="aspect-video bg-gray-100 dark:bg-gray-900 relative overflow-hidden flex items-center justify-center"
+                                      class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center font-bold text-xs"
+                                    >
+                                      #{{ retry.attempt }}
+                                    </div>
+                                    <div class="flex-1">
+                                      <div
+                                        class="text-xs font-bold flex items-center gap-2"
+                                      >
+                                        Attempt {{ retry.attempt }}
+                                        <QanaryTooltip
+                                          :text="retry.outcome"
+                                          class="capitalize"
+                                        >
+                                          <span
+                                            :class="
+                                              retry.outcome === 'passed'
+                                                ? 'text-green-500'
+                                                : 'text-red-500'
+                                            "
+                                            class="uppercase text-[10px]"
+                                            >{{ retry.outcome }}</span
+                                          >
+                                        </QanaryTooltip>
+                                      </div>
+                                      <div
+                                        class="text-[10px] text-gray-400 font-mono"
+                                      >
+                                        Duration:
+                                        {{ formatDuration(retry.durationMs) }}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Retry Detail (Error) -->
+                                  <div
+                                    v-if="retry.error"
+                                    class="p-4 bg-red-50/30 dark:bg-red-950/10 rounded-xl border border-red-100 dark:border-red-900/20"
+                                  >
+                                    <div
+                                      class="text-xs font-bold text-red-700 dark:text-red-400 mb-2"
+                                    >
+                                      {{ stripAnsi(retry.error.message) }}
+                                    </div>
+                                    <pre
+                                      v-if="retry.error.stack"
+                                      class="text-[10px] font-mono text-red-600/70 dark:text-red-400/50 bg-black/5 dark:bg-black/40 p-3 rounded-lg overflow-x-auto whitespace-pre-wrap"
+                                      >{{ stripAnsi(retry.error.stack) }}</pre
+                                    >
+                                  </div>
+
+                                  <!-- Retry Attachments -->
+                                  <div
+                                    v-if="retry.attachments?.length"
+                                    class="flex gap-3 overflow-x-auto pb-2"
+                                  >
+                                    <div
+                                      v-for="(att, aIdx) in retry.attachments"
+                                      :key="aIdx"
+                                      class="flex-shrink-0 w-48 aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden relative group/ratt"
                                     >
                                       <img
-                                        v-if="attachment.type === 'image'"
-                                        :alt="attachment.name"
-                                        :src="attachment.url"
-                                        class="object-contain w-full h-full"
-                                        loading="lazy"
-                                      />
-                                      <video
-                                        v-else-if="attachment.type === 'video'"
-                                        :src="attachment.url"
-                                        class="object-contain w-full h-full"
-                                        controls
+                                        v-if="att.type === 'image'"
+                                        :src="att.url"
+                                        class="w-full h-full object-cover"
                                       />
                                       <div
                                         v-else
-                                        class="flex flex-col items-center gap-2 text-gray-400"
+                                        class="w-full h-full flex items-center justify-center text-gray-400"
                                       >
                                         <UIcon
-                                          :name="
-                                            attachment.type === 'text'
-                                              ? 'i-lucide-file-text'
-                                              : 'i-lucide-paperclip'
-                                          "
-                                          class="w-8 h-8 opacity-50"
+                                          class="w-6 h-6"
+                                          name="i-lucide-file-text"
                                         />
                                       </div>
-
                                       <div
-                                        class="absolute inset-0 bg-black/40 opacity-0 group-hover/attachment:opacity-100 transition-opacity flex items-center justify-center gap-2"
+                                        class="absolute inset-0 bg-black/40 opacity-0 group-hover/ratt:opacity-100 transition-opacity flex items-center justify-center"
                                       >
                                         <UButton
-                                          v-if="attachment.url !== '#'"
-                                          :to="attachment.url"
-                                          color="white"
+                                          :to="att.url"
+                                          color="neutral"
                                           external
                                           icon="i-lucide-external-link"
                                           size="xs"
                                           target="_blank"
                                           variant="solid"
                                         />
-                                        <UButton
-                                          color="white"
-                                          icon="i-lucide-maximize"
-                                          size="xs"
-                                          variant="solid"
-                                          @click.stop
-                                        />
                                       </div>
-                                    </div>
-
-                                    <div
-                                      class="p-2.5 flex items-center justify-between border-t border-gray-100 dark:border-gray-800"
-                                    >
-                                      <div class="min-w-0">
-                                        <div
-                                          class="text-[11px] font-bold text-gray-700 dark:text-gray-200 truncate"
-                                        >
-                                          {{ attachment.name }}
-                                        </div>
-                                        <div
-                                          class="text-[9px] text-gray-400 font-mono"
-                                        >
-                                          {{ attachment.contentType }} ·
-                                          {{
-                                            Math.round(
-                                              (attachment.size || 0) / 1024,
-                                            )
-                                          }}
-                                          KiB
-                                        </div>
-                                      </div>
-                                      <UIcon
-                                        :class="
-                                          attachment.type === 'image'
-                                            ? 'text-blue-400'
-                                            : attachment.type === 'video'
-                                              ? 'text-purple-400'
-                                              : 'text-gray-400'
-                                        "
-                                        :name="
-                                          attachment.type === 'image'
-                                            ? 'i-lucide-image'
-                                            : attachment.type === 'video'
-                                              ? 'i-lucide-video'
-                                              : 'i-lucide-file-text'
-                                        "
-                                        class="w-4 h-4 flex-shrink-0"
-                                      />
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-
-                              <div v-if="test.steps?.length" class="space-y-3">
-                                <div
-                                  class="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2"
-                                >
-                                  Execution Body
-                                  <div
-                                    class="h-[1px] flex-1 bg-gray-100 dark:bg-gray-800"
-                                  />
-                                </div>
-                                <div class="space-y-1">
-                                  <div
-                                    v-for="(step, idx) in test.steps"
-                                    :key="idx"
-                                    class="flex items-center justify-between p-2 rounded-md hover:bg-white dark:hover:bg-gray-800/50 transition-colors group/step"
-                                  >
-                                    <div class="flex items-center gap-3">
-                                      <UIcon
-                                        :class="
-                                          step.outcome === 'passed'
-                                            ? 'text-green-500'
-                                            : 'text-red-500'
-                                        "
-                                        :name="
-                                          step.outcome === 'passed'
-                                            ? 'i-lucide-check'
-                                            : 'i-lucide-x'
-                                        "
-                                        class="w-3.5 h-3.5"
-                                      />
-                                      <span
-                                        class="text-xs text-gray-600 dark:text-gray-400 group-hover/step:text-gray-900 dark:group-hover/step:text-gray-100"
-                                        >{{ stripAnsi(step.title) }}</span
-                                      >
-                                    </div>
-                                    <span
-                                      class="text-[10px] font-mono text-gray-400"
-                                      >{{
-                                        formatDuration(step.durationMs)
-                                      }}</span
-                                    >
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div
-                                v-if="
-                                  !test.error &&
-                                  !test.steps?.length &&
-                                  !test.attachments?.length
-                                "
-                                class="text-xs text-gray-500 italic flex items-center gap-2"
-                              >
-                                <UIcon
-                                  class="w-3.5 h-3.5"
-                                  name="i-lucide-info"
-                                />
-                                No detailed logs, steps, or attachments
-                                available for this test.
                               </div>
                             </div>
                           </div>
@@ -919,6 +1205,48 @@ const hierarchicalTests = computed(() => {
 
   return root;
 });
+
+const activeTestTabs = ref<Record<string, string>>({});
+
+const getActiveTab = (testId: string) =>
+  activeTestTabs.value[testId] || "overview";
+const setActiveTab = (testId: string, tab: string) => {
+  activeTestTabs.value[testId] = tab;
+};
+
+const testTabs = (test: TestCase) => {
+  const tabs = [
+    { label: "Overview", value: "overview", icon: "i-lucide-layout-dashboard" },
+  ];
+  if (test.attachments?.length) {
+    tabs.push({
+      label: "Attachments",
+      value: "attachments",
+      icon: "i-lucide-paperclip",
+    });
+  }
+  if (test.history?.length) {
+    tabs.push({ label: "History", value: "history", icon: "i-lucide-history" });
+  }
+  if (test.retries?.length) {
+    tabs.push({
+      label: "Retries",
+      value: "retries",
+      icon: "i-lucide-refresh-cw",
+    });
+  }
+  return tabs;
+};
+
+const formatDate = (iso: string) => {
+  const d = new Date(iso);
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d);
+};
 
 const errorMessage = computed(() => {
   const e = error.value as any;

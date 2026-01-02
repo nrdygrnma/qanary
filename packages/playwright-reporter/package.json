@@ -1,6 +1,6 @@
 {
   "name": "@qanary/playwright-reporter",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Playwright reporter for Qanary reporting framework",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
